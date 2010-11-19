@@ -134,7 +134,7 @@ $Reduction(\langle G,k \rangle)$ appartient à notre langage $L$.
 
 
 \subsubsection{$\langle G,k \rangle \not\in \text{CLIQUE} \implies
-  Reduction(\langle G,k \rangle) \not\in L$}
+  Reduction(\langle G,k \rangle) \not\in L$ (contraposée)}
 
 \begin{itemize}
 \item En joignant $G$ et $G_2$, on a que $|G_t| = |G| + |G_2| = 2|G|$.
@@ -154,10 +154,92 @@ notre langage $L$.
 Comme nous avons démontré que $L \in NP$ et que $L$ est NP-difficile,
 nous avons donc démontré que $L$ est un langage NP-complet.
 
-
+\newpage
 
 \section{Question 2}
 
+\emph{Montrer que L est NP-complet où:}
+\[
+L = \{ \langle C_1, C_2 \rangle : \text{$C_1$ et $C_2$ calculent une
+  fonction différente} \}
+\]
+
+Le langage $L$ est NP-complet si:
+\begin{enumerate}
+  \item $L \in \NP$
+  \item $L$ est NP-difficile
+\end{enumerate}
+
+\subsection{$L \in \NP$}
+
+$L$ appartient à NP s'il existe une machine de Turing qui le vérifie
+en temps polynomial.
+
+\begin{verbatim}
+Verificateur(C1, C2, C):
+  retourner C1(C) != C2(C)
+fin
+\end{verbatim}
+
+\emph{Verificateur} exécute les deux circuits booléens avec le
+certificat et retourne vrai si $C_1$ et $C_2$ calculent un résultat
+différent et faux s'ils calculent le même résultat pour un certificat
+$C$.  L'exécution de $C_1$ et de $C_2$ se fait en temps polynomial,
+donc l'exécution de \emph{Verificateur} se fait aussi en temps
+polynomial, et donc $L \in \NP$.
+
+\subsection{$L$ est NP-difficile}
+
+$L$ est NP-difficile si tous les langages $L'$ dans NP peuvent se
+réduire à $L$ en temps polynomial et si $w \in L' \iff f(w) \in L$.
+
+\subsubsection{Fonction de réduction}
+
+Utilisons le langage NP 3-SAT pour montrer que $L$ est NP-complet.
+Nous allons réduire une expression $\phi \in \text{3-SAT}$ à $L$ comme
+ceci:
+
+\begin{verbatim}
+Reduction(phi):
+  C1 = Construire le circuit booléen associé à phi
+  C2 = Construire le circuit booléen associé à (phi et 0)
+  retourner <C1, C2>
+fin
+\end{verbatim}
+
+La construction d'un circuit booléen à partir d'une expression
+booléenne se fait en temps polynomial, et la somme de deux polynômes
+et un polynôme, donc \emph{Reduction} fonctionne en temps polynomial.
+
+\subsubsection{$\phi \in \text{3-SAT} \implies Reduction(\phi) \in L$}
+
+\begin{itemize}
+\item $\phi$ est dans 3-SAT, donc $\phi = 1$
+\item $\phi \wedge 0 = 1 \wedge 0 = 0$
+\item Les circuits $C_1$ et $C_2$ associés à $\phi$ et $(\phi \wedge 0)$
+  calculent des résultats différents.
+\end{itemize}
+
+Donc, si $\phi$ est dans 3-SAT, alors $Reduction(\phi)$ est dans notre
+langage $L$.
+
+
+\subsubsection{$\phi \not\in \text{3-SAT} \implies Reduction(\phi)
+  \not\in L$ (contraposée)}
+
+\begin{itemize}
+\item $\phi$ n'est \textbf{pas} dans 3-SAT, donc $\phi = 0$
+\item $\phi \wedge 0 = 0 \wedge 0 = 0$
+\item Les circuits $C_1$ et $C_2$ associés à $\phi$ et $(\phi \wedge 0)$
+  calculent des résultats égaux.
+\end{itemize}
+
+Donc, si $\phi$ n'est \emph{pas} dans 3-SAT, alors $Reduction(\phi)$
+n'est pas dans notre langage $L$.
+
+\subsection{Conclusion}
+
+Comme $L$ appartient à NP et qu'il est NP-difficile, alors $L$ est NP-complet.
 
 \newpage
 
