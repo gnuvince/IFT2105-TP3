@@ -28,7 +28,7 @@ L = \{ G : G \text{ est un graphe de $n$ noeuds ayant une clique de
   taille au moins $n/2$} \}
 \]
 
-Un langage $L$ est NP-complet si:
+Le langage $L$ est NP-complet si:
 \begin{enumerate}
   \item $L \in \NP$
   \item $L$ est NP-difficile
@@ -53,9 +53,8 @@ Verificateur(G, C):
     pour chaque autre-noeud dans C \ {noeud}:
       si noeud et autre-noeud ne sont pas voisins:
         retourner faux
-      fin si
-    fin pour
-  fin pour
+
+  // Tous les noeuds sont voisins
   retourner vrai
 fin
 \end{verbatim}
@@ -66,9 +65,9 @@ fin
 
 $L$ est NP-difficile si $L$ est au moins aussi difficile que tous les
 autres langages dans NP.  Écrit de façon mathématique, pour tout
-langage $K$ de NP, il existe une fonction $f$ qui permet de réduire
-$K$ à $L$ en temps polynomial (noté $K \le_p L$) et donc $w \in K \iff
-f(w) \in L$.
+langage $K$ de NP, il existe une machine de Turing qui permet de
+réduire $K$ à $L$ en temps polynomial (noté $K \le_p L$) et où $w
+\in K \iff f(w) \in L$.
 
 \subsubsection{Fonction de réduction}
 
@@ -76,12 +75,84 @@ Nous savons que le langage CLIQUE est NP-complet.  Voici sa
 définition:
 
 \[
-\text{CLIQUE} = \{ <G, k> : G \text{ possède un sous-graphe complet de
+\text{CLIQUE} = \{ \langle G, k \rangle : G \text{ possède un sous-graphe complet de
   $k$ sommets} \}
 \]
 
 
-\subsubsection{$w \in \text{CLIQUE} \implies f(w) \in L$}
+Cherchons une fonction de réduction de CLIQUE vers $L$ qui s'exécute
+en temps polynomial.
+
+Nous allons faire une fonction qui:
+
+\begin{enumerate}
+\item Crée un graphe $G_2$ contenant le même nombre de sommets que $G$
+\item Crée une clique de $|G|-k$ sommets dans $G_2$.
+\item Connecte tous les sommets de $G$ à tous les sommets de $G_2$
+  (formant ainsi un graphe que nous appelerons $G_t$, $t$ pour total).
+\end{enumerate}
+
+\begin{verbatim}
+Reduction(G, k):
+  G2 = nouveau Graphe
+
+  // 1
+  pour i = 1 à |G|:
+    G2.AjouterSommet(i)
+
+  // 2
+  pour i = 1 à |G|-k
+    pour j = i à |G|-k
+      Connecter(G2[i], G2[j])
+
+  // 3
+  pour chaque sommet s1 de G:
+    pour chaque sommet s2 de G:
+      Connecter(s1, s2)
+fin
+\end{verbatim}
+
+L'étape 1 s'exécute en $O(n)$, l'étape 2 s'exécute en $O(n^2)$ et
+l'étape 3 s'exécute en $O(n^2)$.  La somme de 3 polynômes est un
+polynôme, donc la fonction de réduction s'exécute en temps polynomial.
+
+
+
+\subsubsection{$\langle G,k \rangle \in \text{CLIQUE} \implies Reduction(\langle G,k \rangle) \in L$}
+
+\begin{itemize}
+\item En joignant $G$ et $G_2$, on a que $|G_t| = |G| + |G_2| = 2|G|$.
+\item $G$ contient une $k$-clique.
+\item $G_2$ contient une $(|G|-k)$-clique.
+\item En joignant tout les sommets de $G$ à ceux de $G_2$, on a joint
+  tous les sommets formant les deux cliques ensemble, donc $G_t$
+  contient une clique de taille $k + (|G|-k) = |G| = |G_t|/2$.
+\end{itemize}
+
+Et donc, si $\langle G,k \rangle$ appartient à CLIQUE, alors
+$Reduction(\langle G,k \rangle)$ appartient à notre langage $L$.
+
+
+\subsubsection{$\langle G,k \rangle \not\in \text{CLIQUE} \implies
+  Reduction(\langle G,k \rangle) \not\in L$}
+
+\begin{itemize}
+\item En joignant $G$ et $G_2$, on a que $|G_t| = |G| + |G_2| = 2|G|$.
+\item $G$ ne contient \textbf{pas} une $k$-clique.
+\item $G_2$ contient une $(|G|-k)$-clique.
+\item En joignant tout les sommets de $G$ à ceux de $G_2$, la clique
+  maximale pouvant se trouver dans $G_t$ a une taille strictement
+  inférieure à $k + (|G|-k) = |G| = |G_t|/2$.
+\end{itemize}
+
+Et donc, si $\langle G,k \rangle$ ne contient \textbf{pas} une
+$k$-clique, alors $Reduction(\langle G,k \rangle)$ n'appartient pas à
+notre langage $L$.
+
+\subsection{Conclusion}
+
+Comme nous avons démontré que $L \in NP$ et que $L$ est NP-difficile,
+nous avons donc démontré que $L$ est un langage NP-complet.
 
 
 
@@ -119,10 +190,8 @@ Possede-Une-3Clique(G):
       pour k := j+1 à |G|:
         si (i, j, k) sont tous voisins:
           retourner vrai
-        fin si
-      fin pour
-    fin pour
-  fin pour
+
+  // Aucune 3-clique n'a été trouvée
   retourner faux
 fin
 \end{verbatim}
