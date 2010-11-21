@@ -63,11 +63,9 @@ fin
 
 \subsection{$L$ est NP-difficile}
 
-$L$ est NP-difficile si $L$ est au moins aussi difficile que tous les
-autres langages dans NP.  Écrit de façon mathématique, pour tout
-langage $K$ de NP, il existe une machine de Turing qui permet de
-réduire $K$ à $L$ en temps polynomial (noté $K \le_p L$) et où $w
-\in K \iff f(w) \in L$.
+$L$ est NP-difficile si tous les langages $L'$ dans NP peuvent se
+réduire à $L$ en temps polynomial et si $w \in L' \iff f(w) \in L$.
+
 
 \subsubsection{Fonction de réduction}
 
